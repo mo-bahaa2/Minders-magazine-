@@ -57,6 +57,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             <motion.img
               src={story.cover}
               alt={story.title}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop';
+              }}
               className="w-full h-full object-cover"
               animate={{
                 scale: isHovered ? 1.1 : 1

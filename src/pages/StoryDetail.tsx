@@ -80,6 +80,10 @@ export const StoryDetail: React.FC = () => {
           }}
           src={story.cover}
           alt={story.title}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop';
+          }}
           className="w-full h-full object-cover" />
         
         <div
@@ -156,6 +160,10 @@ export const StoryDetail: React.FC = () => {
               <img
                 src={nextStory.cover}
                 alt={nextStory.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop';
+                }}
                 className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-700" />
               
               <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-center p-6">
