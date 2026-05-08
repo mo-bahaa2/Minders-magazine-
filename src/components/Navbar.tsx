@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -21,27 +21,30 @@ export const Navbar: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  const isDarkNavbar = scrolled || mobileMenuOpen;
+  const logoSrc = isDarkNavbar
+    ? "/Minders%20Logos/White/Untitled-3.png"
+    : "/Minders%20Logos/Black/Minders.png";
+
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled || mobileMenuOpen ? 'bg-minder-black/95 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'
+        isDarkNavbar ? 'bg-minder-black/95 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'
       }`}
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-        <Link to="/" className="group flex items-center gap-2" data-cursor="hover">
-          <motion.div
-            whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-            transition={{ duration: 0.5 }}
-            className="text-minder-yellow"
-          >
-            <Brain size={32} strokeWidth={2} />
-          </motion.div>
-          <span className="font-playfair text-2xl font-bold tracking-wider text-white">
-            MINDERS
-          </span>
+        <Link to="/" className="group flex items-center" data-cursor="hover">
+          <motion.img
+            key={logoSrc} // Add key to force re-render/animation if needed or just let it swap src
+            src={logoSrc}
+            alt="Minders Logo"
+            className="h-10 md:h-16 w-auto object-contain transition-all duration-300"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          />
         </Link>
 
         {/* Desktop Navigation */}

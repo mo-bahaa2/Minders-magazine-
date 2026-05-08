@@ -12,6 +12,7 @@ import { Footer } from './components/Footer';
 import { Home } from './pages/Home';
 import { StoryDetail } from './pages/StoryDetail';
 import { AboutUs } from './pages/AboutUs';
+import { Archive } from './pages/Archive';
 // Wrapper component to handle AnimatePresence with useLocation
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -19,6 +20,7 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
+        <Route path="/archive" element={<Archive />} />
         <Route path="/story/:id" element={<StoryDetail />} />
         <Route path="/about" element={<AboutUs />} />
       </Routes>

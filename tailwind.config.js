@@ -15,6 +15,8 @@ export default {
       fontFamily: {
         playfair: ['"Playfair Display"', 'serif'],
         inter: ['Inter', 'sans-serif'],
+        amiri: ['Amiri', 'serif'],
+        cairo: ['Cairo', 'sans-serif'],
       },
       boxShadow: {
         'hard-black': '6px 6px 0px #0A0A0A',

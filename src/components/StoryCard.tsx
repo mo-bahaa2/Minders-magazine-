@@ -76,14 +76,14 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           </div>
 
           {/* Content */}
-          <div className="p-6">
-            <h3 className="font-playfair text-2xl font-bold text-minder-black mb-4 line-clamp-2 leading-tight">
+          <div className="p-6" dir={story.language === 'ar' ? 'rtl' : 'ltr'}>
+            <h3 className={`text-2xl font-bold mb-4 line-clamp-2 leading-tight ${story.language === 'ar' ? 'font-cairo text-right' : 'font-playfair text-left'} text-minder-black`}>
               {story.title}
             </h3>
 
-            <div className="flex flex-col gap-1 text-xs font-inter font-semibold text-minder-gray uppercase tracking-wider">
-              <span>Written by {story.author}</span>
-              <span>Designed by {story.designer}</span>
+            <div className={`flex flex-col gap-1 text-xs font-semibold uppercase tracking-wider ${story.language === 'ar' ? 'font-cairo text-right text-minder-gray' : 'font-inter text-left text-minder-gray'}`}>
+              <span>{story.language === 'ar' ? `بِقَلَم ${story.author}` : `Written by ${story.author}`}</span>
+              <span>{story.language === 'ar' ? `تَصْمِيم ${story.designer}` : `Designed by ${story.designer}`}</span>
             </div>
           </div>
         </div>

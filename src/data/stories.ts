@@ -9,6 +9,7 @@ export interface Story {
   designer: string;
   readingTime: string;
   mood: Mood;
+  language?: 'en' | 'ar';
   content: string[];
 }
 
@@ -120,4 +121,21 @@ export const stories: Story[] = [
   'There is a distinct aesthetic to film—the grain, the unpredictable color shifts, the soft focus—that digital filters can only mimic. It is imperfect, and in that imperfection, it feels more real.',
   'We spoke to a new generation of photographers who are choosing the darkroom over Lightroom. For them, the process is just as important as the result. It is a slow, deliberate act of creation in a fast-paced world.']
 
+},
+{
+  id: '7',
+  title: 'رُوحُ القَاهِرَةِ المُعِزِّيَّةِ',
+  cover: 'https://images.unsplash.com/photo-1553649084-3e42773ff0e3?q=80&w=2000&auto=format&fit=crop',
+  excerpt: 'فِي أَزِقَّةِ المُعِزِّ، يَتَنَفَّسُ التَّارِيخُ بَيْنَ جُدْرَانِ المَسَاجِدِ وَالأسْوَاقِ، وَتَتَعَانَقُ رَائِحَةُ البَخُورِ مَعَ أَبْوَابِ التَّارِيخِ.',
+  author: 'محمد بهاء',
+  designer: 'مريم حسن',
+  readingTime: '5 min read',
+  mood: 'nostalgic',
+  language: 'ar',
+  content: [
+    'لَمْ تَكُنْ رِحْلَتِي إِلَى شَارِعِ المُعِزِّ مُجَرَّدَ نُزْهَةٍ عَادِيَّةٍ، بَلْ كَانَتْ بِمَثَابَةِ عَوْدَةٍ بِالزَّمَنِ إِلَى عُصُورٍ مَضَتْ. هُنَاكَ، حَيْثُ تَتَشَابَكُ المِئْذَنَةُ مَعَ السَّمَاءِ بِلَوْنِهَا الذَّهَبِيِّ عِنْدَ الغُرُوبِ.',
+    'سِرْتُ بَيْنَ الأَرْصِفَةِ الحَجَرِيَّةِ التِي شَهِدَتْ خُطُوَاتِ المَمَالِيكِ، كُلُّ حَجَرٍ يَنْطِقُ بِحِكَايَةٍ، وَكُلُّ بَابٍ نُحَاسِيٍّ يُخْفِي وَرَاءَهُ أَسْرَارَ حِقْبَةٍ زَمَنِيَّةٍ تَأْبَى النِّسْيَانَ.',
+    'صَوْتُ البَاعَةِ، رَائِحَةُ التَّوَابِلِ وَالبَخُورِ، وَنَقَشَاتُ الخَشَبِ العَتِيقَةِ (المَشْرَبِيَّة).. كُلُّ شَيْءٍ هُنَا يَعْزِفُ سِيمْفُونِيَّةً عَرَبِيَّةً أَصِيلَةً تَمَسُّ الرُّوحَ قَبْلَ العَيْنِ.',
+    'وَفِي نِهَايَةِ الجَوْلَةِ، جَلَسْتُ فِي مَقْهَى الفِيشَاوِي العَرِيقِ، أَرْتَشِفُ الشَّايَ بِالنَّعْنَاعِ، وَأُرَاقِبُ وُجُوهَ المَارَّةِ التِي تَمْتَزِجُ فِيهَا حَدَاثَةُ الحَاضِرِ بِعَبَقِ المَاضِي.'
+  ]
 }];

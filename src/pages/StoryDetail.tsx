@@ -40,6 +40,8 @@ export const StoryDetail: React.FC = () => {
     nostalgic: 'bg-amber-700/30'
   };
   const nextStory = stories.find((s) => s.id !== id) || stories[0];
+  const isAr = story.language === 'ar';
+  
   return (
     <motion.article
       initial={{
@@ -91,19 +93,19 @@ export const StoryDetail: React.FC = () => {
         
         <div className="absolute inset-0 bg-gradient-to-t from-minder-black via-minder-black/40 to-transparent" />
 
-        <div className="absolute top-24 left-6 md:left-12 z-10">
+        <div className={`absolute top-24 z-10 ${isAr ? 'right-6 md:right-12' : 'left-6 md:left-12'}`}>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-white/80 hover:text-minder-yellow transition-colors font-inter text-sm uppercase tracking-widest"
+            className={`flex items-center gap-2 text-white/80 hover:text-minder-yellow transition-colors text-sm uppercase tracking-widest ${isAr ? 'font-cairo' : 'font-inter'}`}
             data-cursor="hover">
             
-            <ArrowLeft size={16} /> Back to Archive
+            <ArrowLeft size={16} className={isAr ? 'rotate-180' : ''} /> {isAr ? 'العَوْدَةُ لِلأَرْشِيف' : 'Back to Archive'}
           </button>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full p-6 md:p-20 container mx-auto">
+        <div className={`absolute bottom-0 w-full p-6 md:p-20 container mx-auto ${isAr ? 'text-right right-0' : 'text-left left-0'}`} dir={isAr ? 'rtl' : 'ltr'}>
           <ScrollReveal direction="up">
-            <h1 className="font-playfair text-5xl md:text-7xl lg:text-8xl text-white font-bold mb-8 leading-tight drop-shadow-2xl max-w-5xl">
+            <h1 className={`${isAr ? 'font-amiri' : 'font-playfair'} text-5xl md:text-7xl lg:text-8xl text-white font-bold mb-8 leading-tight drop-shadow-2xl max-w-5xl`}>
               {story.title}
             </h1>
 
@@ -126,15 +128,15 @@ export const StoryDetail: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-6 mt-20">
+      <div className="container mx-auto px-6 mt-20" dir={isAr ? 'rtl' : 'ltr'}>
         <div className="max-w-2xl mx-auto">
           <ScrollReveal delay={0.2}>
-            <p className="text-2xl md:text-3xl font-playfair text-minder-yellow leading-snug mb-12 italic">
+            <p className={`text-2xl md:text-3xl ${isAr ? 'font-amiri font-bold text-right' : 'font-playfair italic'} text-minder-yellow leading-snug mb-12`}>
               "{story.excerpt}"
             </p>
           </ScrollReveal>
 
-          <div className="space-y-8 text-lg md:text-xl text-gray-300 font-inter leading-relaxed">
+          <div className={`space-y-8 text-lg md:text-xl text-gray-300 leading-relaxed ${isAr ? 'font-amiri text-right' : 'font-inter'}`}>
             {story.content.map((paragraph, idx) =>
             <ScrollReveal key={idx} delay={0.1}>
                 <p>{paragraph}</p>

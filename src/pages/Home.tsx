@@ -34,7 +34,7 @@ export const Home: React.FC = () => {
       className="bg-minder-black">
       
       <HeroCarousel />
-      <StoriesGrid />
+      <StoriesGrid limit={4} />
       <CTASection />
     </motion.main>);
 
