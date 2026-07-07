@@ -13,6 +13,7 @@ import { Home } from './pages/Home';
 import { StoryDetail } from './pages/StoryDetail';
 import { AboutUs } from './pages/AboutUs';
 import { Archive } from './pages/Archive';
+import { Favorites } from './pages/Favorites';
 // Wrapper component to handle AnimatePresence with useLocation
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/archive" element={<Archive />} />
         <Route path="/story/:id" element={<StoryDetail />} />
+        <Route path="/favorites" element={<Favorites />} />
         <Route path="/about" element={<AboutUs />} />
       </Routes>
     </AnimatePresence>);

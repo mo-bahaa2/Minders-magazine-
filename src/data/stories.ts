@@ -2,6 +2,7 @@ export type Mood = 'warm' | 'dark' | 'nostalgic';
 
 export interface Story {
   id: string;
+  _id?: string;
   title: string;
   cover: string;
   excerpt: string;
@@ -11,6 +12,9 @@ export interface Story {
   mood: Mood;
   language?: 'en' | 'ar';
   content: string[];
+  createdAt?: string;
+  likesCount?: number;
+  views?: number;
 }
 
 export const stories: Story[] = [

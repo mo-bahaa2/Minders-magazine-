@@ -1,24 +1,66 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
+
+const XIcon = ({ size = 24, strokeWidth = 1.5 }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth={strokeWidth} 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="M4 4l16 16" />
+    <path d="M4 20L20 4" />
+  </svg>
+);
+
+const TikTokIcon = ({ size = 24, strokeWidth = 1.5 }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth={strokeWidth} 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
+
 export const Footer: React.FC = () => {
   const socials = [
-  {
-    icon: Facebook,
-    name: 'Facebook'
-  },
-  {
-    icon: Instagram,
-    name: 'Instagram'
-  },
-  {
-    icon: Twitter,
-    name: 'Twitter'
-  },
-  {
-    icon: Youtube,
-    name: 'YouTube'
-  }];
+    {
+      icon: Facebook,
+      name: 'Facebook',
+      url: 'https://www.facebook.com/MindersORG'
+    },
+    {
+      icon: Instagram,
+      name: 'Instagram',
+      url: 'https://www.instagram.com/mindersorg?igsh=MXV2ajk2d3Z4d3RiYw=='
+    },
+    {
+      icon: XIcon,
+      name: 'X',
+      url: 'https://x.com/mindersorg'
+    },
+    {
+      icon: Linkedin,
+      name: 'LinkedIn',
+      url: 'https://www.linkedin.com/company/minders/'
+    },
+    {
+      icon: TikTokIcon,
+      name: 'TikTok',
+      url: 'https://www.tiktok.com/@minders.org'
+    }
+  ];
 
   return (
     <footer className="bg-minder-black text-white py-20 border-t-2 border-minder-gray/20">
@@ -27,22 +69,25 @@ export const Footer: React.FC = () => {
           Stay Curious.
         </h3>
 
-        <div className="flex gap-6 mb-16">
+        <div className="flex flex-wrap justify-center gap-6 mb-16">
           {socials.map((social, idx) =>
-          <motion.a
-            key={idx}
-            href="#"
-            data-cursor="hover"
-            whileHover={{
-              scale: 1.1,
-              rotate: 5,
-              y: -5
-            }}
-            whileTap={{
-              scale: 0.95
-            }}
-            className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center hover:bg-minder-yellow hover:border-minder-yellow hover:text-minder-black transition-colors duration-300">
-            
+            <motion.a
+              key={idx}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor="hover"
+              whileHover={{
+                scale: 1.1,
+                rotate: 5,
+                y: -5
+              }}
+              whileTap={{
+                scale: 0.95
+              }}
+              className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center hover:bg-minder-yellow hover:border-minder-yellow hover:text-minder-black transition-colors duration-300"
+              aria-label={`Follow us on ${social.name}`}
+            >
               <social.icon size={24} strokeWidth={1.5} />
             </motion.a>
           )}
@@ -62,6 +107,6 @@ export const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-    </footer>);
-
+    </footer>
+  );
 };

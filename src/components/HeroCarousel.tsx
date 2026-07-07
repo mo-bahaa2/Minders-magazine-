@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { stories } from '../data/stories';
+import { useFeaturedStories } from '../hooks/useStories';
 import { Button } from './Button';
 import { ArrowRight } from 'lucide-react';
+import { LoadingSpinner } from './LoadingSpinner';
 export const HeroCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const featuredStories = stories.slice(0, 3);
+  const { stories: featuredStories, loading } = useFeaturedStories();
+  
   useEffect(() => {
-    if (isHovered) return;
+    if (isHovered || featuredStories.length === 0) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % featuredStories.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [isHovered, featuredStories.length]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen bg-minder-black flex items-center justify-center">
+        <LoadingSpinner size={80} />
+      </div>
+    );
+  }
+
+  if (featuredStories.length === 0) return null;
+
   const slideVariants = {
     enter: {
       opacity: 0,
@@ -50,6 +63,20 @@ export const HeroCarousel: React.FC = () => {
       }
     }
   };
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset: number, velocity: number) => {
+    return Math.abs(offset) * velocity;
+  };
+
+  const handleDragEnd = (e: any, { offset, velocity }: any) => {
+    const swipe = swipePower(offset.x, velocity.x);
+    if (swipe < -swipeConfidenceThreshold) {
+      setCurrentIndex((prev) => (prev + 1) % featuredStories.length);
+    } else if (swipe > swipeConfidenceThreshold) {
+      setCurrentIndex((prev) => (prev - 1 + featuredStories.length) % featuredStories.length);
+    }
+  };
+
   return (
     <div
       className="relative w-full h-screen overflow-hidden bg-minder-black"
@@ -63,7 +90,11 @@ export const HeroCarousel: React.FC = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          className="absolute inset-0">
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.8}
+          onDragEnd={handleDragEnd}
+          className="absolute inset-0 cursor-grab active:cursor-grabbing">
           
           {/* Background Image with Parallax feel */}
           <motion.img

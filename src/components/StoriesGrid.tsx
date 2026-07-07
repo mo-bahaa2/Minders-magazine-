@@ -1,23 +1,33 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { stories } from '../data/stories';
+import { useStories } from '../hooks/useStories';
 import { StoryCard } from './StoryCard';
 import { ScrollReveal } from './ScrollReveal';
 import { Button } from './Button';
+import { LoadingSpinner } from './LoadingSpinner';
+import { useLikes } from '../hooks/useLikes';
 
 interface StoriesGridProps {
   limit?: number;
   showBackButton?: boolean;
+  likedOnly?: boolean;
 }
 
-export const StoriesGrid: React.FC<StoriesGridProps> = ({ limit, showBackButton = false }) => {
+export const StoriesGrid: React.FC<StoriesGridProps> = ({ limit, showBackButton = false, likedOnly = false }) => {
+  const { stories, loading } = useStories();
+  const { likedIds } = useLikes();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  // Prepare stories: reverse to show newest first, then limit if provided
+  
+  // Prepare stories: filter liked, reverse to show newest first, then limit if provided
   const displayStories = useMemo(() => {
-    const reversed = [...stories].reverse();
+    let filtered = stories;
+    if (likedOnly) {
+      filtered = stories.filter(s => likedIds.includes(s.id));
+    }
+    const reversed = [...filtered].reverse(); // Assuming we want to reverse if backend doesn't
     return limit ? reversed.slice(0, limit) : reversed;
-  }, [limit]);
+  }, [limit, stories, likedOnly, likedIds]);
 
   // Generate consistent random rotations for cards
   const rotations = useMemo(() => {
@@ -45,22 +55,28 @@ export const StoriesGrid: React.FC<StoriesGridProps> = ({ limit, showBackButton 
         <ScrollReveal>
           <div className="flex flex-col items-center text-center mb-20">
             <h2 className="font-playfair text-5xl md:text-7xl font-black text-minder-black mb-6 uppercase tracking-tight">
-              The Archive
+              {likedOnly ? 'Your Favorites' : 'The Archive'}
             </h2>
             <p className="text-minder-black/80 font-inter max-w-xl text-lg font-medium">
-              Explore our collection of immersive editorial stories. Hover to
-              feel the mood, click to dive deep.
+              {likedOnly 
+                ? 'A collection of the editorial stories you loved the most.'
+                : 'Explore our collection of immersive editorial stories. Hover to feel the mood, click to dive deep.'}
             </p>
           </div>
         </ScrollReveal>
 
-        <div className={`grid grid-cols-1 md:grid-cols-2 ${limit === 4 ? 'lg:grid-cols-2 max-w-5xl mx-auto' : 'lg:grid-cols-3'} gap-x-8 gap-y-16`}>
-          {displayStories.map((story, idx) =>
-          <ScrollReveal
-            key={story.id}
-            delay={idx * 0.1}
-            className={idx % 2 !== 0 ? 'lg:mt-16' : ''} // Irregular collage layout
-          >
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${limit === 4 ? 'lg:grid-cols-2 max-w-5xl mx-auto' : 'lg:grid-cols-3'} gap-x-8 gap-y-16 min-h-[400px]`}>
+          {loading ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-minder-black rounded-3xl mx-6">
+              <LoadingSpinner size={64} />
+            </div>
+          ) : displayStories.length > 0 ? (
+            displayStories.map((story, idx) =>
+            <ScrollReveal
+              key={story.id}
+              delay={idx * 0.1}
+              className={idx % 2 !== 0 ? 'lg:mt-16' : ''} // Irregular collage layout
+            >
               <StoryCard
               story={story}
               rotation={rotations[idx]}
@@ -70,6 +86,25 @@ export const StoriesGrid: React.FC<StoriesGridProps> = ({ limit, showBackButton 
               onHoverEnd={() => setHoveredIndex(null)} />
             
             </ScrollReveal>
+            )
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center text-center text-minder-black py-20 font-inter">
+              <h3 className="font-playfair text-3xl font-bold mb-4">
+                {likedOnly ? "No Favorites Yet" : "No Stories Found"}
+              </h3>
+              <p className="text-minder-black/60 max-w-md mb-8">
+                {likedOnly 
+                  ? "You haven't liked any stories yet. Explore our archive and tap the heart icon on your favorite reads to save them here!"
+                  : "We couldn't find any stories in the archive right now. Check back soon for new content."}
+              </p>
+              {likedOnly && (
+                <Link to="/archive">
+                  <Button className="gap-2 px-8 py-4">
+                    Explore Stories <ArrowRight size={18} />
+                  </Button>
+                </Link>
+              )}
+            </div>
           )}
         </div>
 

@@ -1,15 +1,19 @@
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring } from 'framer-motion';
-import { ArrowLeft, Clock, User, PenTool } from 'lucide-react';
-import { stories } from '../data/stories';
+import { ArrowLeft, Clock, User, PenTool, Heart, Calendar } from 'lucide-react';
+import { useStory, useRelatedStories } from '../hooks/useStories';
+import { useLikes } from '../hooks/useLikes';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 export const StoryDetail: React.FC = () => {
   const { id } = useParams<{
     id: string;
   }>();
   const navigate = useNavigate();
-  const story = stories.find((s) => s.id === id);
+  const { story, loading } = useStory(id || '');
+  const { stories: relatedStories } = useRelatedStories(id || '');
+  const { isLiked, toggleLike } = useLikes();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -19,6 +23,15 @@ export const StoryDetail: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-minder-black text-white">
+        <LoadingSpinner size={80} />
+      </div>
+    );
+  }
+
   if (!story) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-minder-black text-white">
@@ -39,7 +52,7 @@ export const StoryDetail: React.FC = () => {
     dark: 'bg-blue-900/40',
     nostalgic: 'bg-amber-700/30'
   };
-  const nextStory = stories.find((s) => s.id !== id) || stories[0];
+  const nextStory = relatedStories[0] || null;
   const isAr = story.language === 'ar';
   
   return (
@@ -93,23 +106,20 @@ export const StoryDetail: React.FC = () => {
         
         <div className="absolute inset-0 bg-gradient-to-t from-minder-black via-minder-black/40 to-transparent" />
 
-        <div className={`absolute top-24 z-10 ${isAr ? 'right-6 md:right-12' : 'left-6 md:left-12'}`}>
-          <button
-            onClick={() => navigate('/')}
-            className={`flex items-center gap-2 text-white/80 hover:text-minder-yellow transition-colors text-sm uppercase tracking-widest ${isAr ? 'font-cairo' : 'font-inter'}`}
-            data-cursor="hover">
-            
-            <ArrowLeft size={16} className={isAr ? 'rotate-180' : ''} /> {isAr ? 'العَوْدَةُ لِلأَرْشِيف' : 'Back to Archive'}
-          </button>
-        </div>
-
-        <div className={`absolute bottom-0 w-full p-6 md:p-20 container mx-auto ${isAr ? 'text-right right-0' : 'text-left left-0'}`} dir={isAr ? 'rtl' : 'ltr'}>
+        <div className={`absolute bottom-0 w-full p-6 pb-24 md:pb-20 md:p-20 container mx-auto ${isAr ? 'text-right right-0' : 'text-left left-0'}`} dir={isAr ? 'rtl' : 'ltr'}>
           <ScrollReveal direction="up">
+            <button
+              onClick={() => navigate('/')}
+              className={`inline-flex items-center gap-2 text-white/90 hover:text-minder-black hover:bg-minder-yellow bg-minder-black/40 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/10 transition-all duration-300 text-xs md:text-sm uppercase tracking-widest mb-6 ${isAr ? 'font-cairo' : 'font-inter'}`}
+              data-cursor="hover">
+              <ArrowLeft size={16} className={isAr ? 'rotate-180' : ''} /> {isAr ? 'العَوْدَةُ لِلأَرْشِيف' : 'Back to Archive'}
+            </button>
+
             <h1 className={`${isAr ? 'font-amiri' : 'font-playfair'} text-5xl md:text-7xl lg:text-8xl text-white font-bold mb-8 leading-tight drop-shadow-2xl max-w-5xl`}>
               {story.title}
             </h1>
 
-            <div className="flex flex-wrap gap-6 md:gap-12 text-white/80 font-inter text-sm uppercase tracking-wider border-t border-white/20 pt-6">
+            <div className="flex flex-wrap items-center gap-6 md:gap-12 text-white/80 font-inter text-sm uppercase tracking-wider border-t border-white/20 pt-6">
               <div className="flex items-center gap-2">
                 <User size={16} className="text-minder-yellow" />
                 <span>{story.author}</span>
@@ -122,6 +132,27 @@ export const StoryDetail: React.FC = () => {
                 <Clock size={16} className="text-minder-yellow" />
                 <span>{story.readingTime}</span>
               </div>
+              {story.createdAt && (
+                <div className="flex items-center gap-2">
+                  <Calendar size={16} className="text-minder-yellow" />
+                  <span className="normal-case tracking-normal">{story.createdAt}</span>
+                </div>
+              )}
+              
+              <div className="flex-grow" />
+              
+              <button
+                onClick={() => toggleLike(story.id, story._id || story.id)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all duration-300 font-bold ${
+                  isLiked(story.id) 
+                    ? 'border-red-500 bg-red-500/10 text-red-500' 
+                    : 'border-white/30 hover:border-red-400 hover:text-red-400'
+                }`}
+                data-cursor="hover"
+              >
+                <Heart size={20} fill={isLiked(story.id) ? 'currentColor' : 'none'} className={isLiked(story.id) ? 'scale-110 transition-transform' : ''} />
+                <span>{isLiked(story.id) ? 'Liked' : 'Like'}</span>
+              </button>
             </div>
           </ScrollReveal>
         </div>
@@ -147,39 +178,41 @@ export const StoryDetail: React.FC = () => {
       </div>
 
       {/* Next Story Suggestion */}
-      <div className="container mx-auto px-6 mt-40">
-        <ScrollReveal>
-          <div className="max-w-4xl mx-auto border-t-2 border-minder-gray/20 pt-20">
-            <h3 className="font-inter text-sm uppercase tracking-widest text-minder-gray mb-8">
-              Keep Reading
-            </h3>
-            <Link
-              to={`/story/${nextStory.id}`}
-              className="group block relative overflow-hidden rounded-xl border-2 border-transparent hover:border-minder-yellow transition-colors duration-500"
-              data-cursor="hover">
-              
-              <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500 z-10" />
-              <img
-                src={nextStory.cover}
-                alt={nextStory.title}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop';
-                }}
-                className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-700" />
-              
-              <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-center p-6">
-                <h4 className="font-playfair text-3xl md:text-5xl text-white font-bold mb-4">
-                  {nextStory.title}
-                </h4>
-                <span className="text-minder-yellow font-inter uppercase tracking-widest text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                  Read Story →
-                </span>
-              </div>
-            </Link>
-          </div>
-        </ScrollReveal>
-      </div>
+      {nextStory && (
+        <div className="container mx-auto px-6 mt-40">
+          <ScrollReveal>
+            <div className="max-w-4xl mx-auto border-t-2 border-minder-gray/20 pt-20">
+              <h3 className="font-inter text-sm uppercase tracking-widest text-minder-gray mb-8">
+                Keep Reading
+              </h3>
+              <Link
+                to={`/story/${nextStory.id}`}
+                className="group block relative overflow-hidden rounded-xl border-2 border-transparent hover:border-minder-yellow transition-colors duration-500"
+                data-cursor="hover">
+                
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500 z-10" />
+                <img
+                  src={nextStory.cover}
+                  alt={nextStory.title}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop';
+                  }}
+                  className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-700" />
+                
+                <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-center p-6">
+                  <h4 className="font-playfair text-3xl md:text-5xl text-white font-bold mb-4">
+                    {nextStory.title}
+                  </h4>
+                  <span className="text-minder-yellow font-inter uppercase tracking-widest text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                    Read Story →
+                  </span>
+                </div>
+              </Link>
+            </div>
+          </ScrollReveal>
+        </div>
+      )}
     </motion.article>);
 
 };
