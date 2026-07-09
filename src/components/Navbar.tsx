@@ -1,12 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Compass, Heart, Info } from 'lucide-react';
+import { Home, Compass, Heart, Info, Download } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+    }
+  };
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -81,6 +110,17 @@ export const Navbar: React.FC = () => {
               <span>About</span>
               <span className="absolute bottom-0 left-0 w-full h-[2px] bg-minder-yellow transform -translate-x-[101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             </Link>
+
+            {isInstallable && (
+              <button 
+                onClick={handleInstallClick}
+                className="flex items-center gap-2 bg-minder-yellow text-black px-4 py-2 rounded-full font-bold text-xs hover:scale-105 transition-transform"
+                data-cursor="hover"
+              >
+                <Download size={16} />
+                INSTALL APP
+              </button>
+            )}
           </div>
         </div>
       </motion.nav>
@@ -125,6 +165,16 @@ export const Navbar: React.FC = () => {
         >
           <Info size={22} strokeWidth={location.pathname === '/about' ? 2.5 : 2} />
         </Link>
+        
+        {isInstallable && (
+          <button 
+            onClick={handleInstallClick}
+            className="flex flex-col items-center gap-1 transition-colors text-minder-yellow hover:scale-110"
+            aria-label="Install App"
+          >
+            <Download size={22} strokeWidth={2.5} />
+          </button>
+        )}
       </motion.div>
     </>
   );
