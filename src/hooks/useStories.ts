@@ -23,10 +23,10 @@ export const useStories = () => {
 
     fetchStories();
 
-    // Auto-refresh in the background every 2 hours
+    // Auto-refresh in the background every 5 minutes
     const intervalId = setInterval(() => {
       fetchStories(true);
-    }, 2 * 60 * 60 * 1000);
+    }, 5 * 60 * 1000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -55,10 +55,10 @@ export const useFeaturedStories = () => {
 
     fetchStories();
 
-    // Auto-refresh in the background every 2 hours
+    // Auto-refresh in the background every 5 minutes
     const intervalId = setInterval(() => {
       fetchStories(true);
-    }, 2 * 60 * 60 * 1000);
+    }, 5 * 60 * 1000);
 
     return () => clearInterval(intervalId);
   }, []);
