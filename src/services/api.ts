@@ -1,4 +1,4 @@
-const BASE_URL = 'https://minders-backend-production.up.railway.app/api';
+const BASE_URL = 'https://magazine-backend-minders.vercel.app/api';
 
 export interface ApiAuthor {
   name: string;
@@ -7,7 +7,8 @@ export interface ApiAuthor {
 }
 
 export interface ApiStory {
-  _id: string;
+  id?: number;
+  _id?: string;
   title: string;
   slug?: string;
   excerpt: string;
@@ -90,7 +91,7 @@ export const storiesApi = {
       const allResponse = await fetch(`${BASE_URL}/stories`);
       if (allResponse.ok) {
         const allData: PaginatedResponse<ApiStory> = await allResponse.json();
-        return allData.data.stories.filter(s => s._id !== id).slice(0, 3);
+        return allData.data.stories.filter(s => (s.id || s._id)?.toString() !== id.toString()).slice(0, 3);
       }
       return [];
     } catch (e) {
@@ -122,8 +123,8 @@ export const mapApiStoryToFrontend = (apiStory: ApiStory) => {
   else if (apiStory.storyCase === 'Identity') mood = 'warm';
 
   return {
-    id: apiStory._id || apiStory.slug || '', // Use _id as ID for routing
-    _id: apiStory._id, // Keep actual DB ID for like action
+    id: apiStory.id?.toString() || apiStory._id || apiStory.slug || '', // Use id or _id for routing
+    _id: apiStory.id?.toString() || apiStory._id, // Keep actual DB ID for like action
     title: apiStory.title,
     cover: apiStory.coverImage,
     excerpt: apiStory.excerpt,
